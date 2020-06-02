@@ -56,5 +56,7 @@ def render_content(tab):
         return production.serve_layout()
 
 
+server = app.server
+
 if __name__ == "__main__":
     app.run_server(debug=True)
