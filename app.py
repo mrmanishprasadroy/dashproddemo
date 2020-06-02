@@ -5,7 +5,7 @@ import flask
 
 
 server = flask.Flask(__name__)
-app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.CYBORG])
+app = dash.Dash(__name__, server=server)
 app.config.suppress_callback_exceptions = True
 server = app.server
 

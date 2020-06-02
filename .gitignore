@@ -4,3 +4,4 @@ venv
 .env
 dash-env
 __pycache__
+.idea
