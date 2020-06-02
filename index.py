@@ -1,59 +1,64 @@
 import dash_core_components as dcc
 import dash_html_components as html
-from app import app
+from app import app, dbc
 from apps import production, stoptime
 from dash.dependencies import Input, Output
 
-app.layout = html.Div(
+# the style arguments for the sidebar. We use position:fixed and a fixed width
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "20rem",
+    "padding": "2rem 1rem",
+    "background-color": "#cbd3da",
+}
+
+# the styles for the main content position it to the right of the sidebar and
+# add some padding.
+CONTENT_STYLE = {
+    "margin-left": "25rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
+
+sidebar = html.Div(
     [
-        # header
-        html.Div([
-
-            html.Span("PLTCM  DashBorad", className='app-title'),
-
-            html.Div(
-                html.Img(
-                    src='assets/logo.png',
-                    height="100%")
-                , style={"float": "right", "height": "80%", "padding": "5px"})
-        ],
-            className="row header"
+        dbc.CardImg(src="assets/logo.png", top=True),
+        html.H2("Production DashBoard", className="display-4"),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink('Production Data ', href='/apps/prod_data', active=True)),
+                dbc.NavItem(dbc.NavLink('Stop Data ', href='/apps/stop_data', active=True)),
+            ],
+            vertical=True,
+            pills=True,
         ),
-
-        # tabs
-        html.Div([
-
-            dcc.Tabs(
-                id="tabs",
-                style={"height": "20", "verticalAlign": "middle"},
-                children=[
-                    dcc.Tab(label="Production", value="production_tab"),
-                    # dcc.Tab(label="Coil Report", value="coilreport_tab"),
-                    dcc.Tab(id="stoptime_tab", label="Stop Times", value="stoptime_tab"),
-                ],
-                value="production_tab",
-            )
-
-        ],
-            className="row tabs_div"
-        ),
-        # Tab content
-        html.Div(id="tab_content", className="row", style={"margin": "2% 3%"}),
-
     ],
-    className="row",
-    style={"margin": "0%"},
+    style=SIDEBAR_STYLE,
 )
 
+content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-@app.callback(Output("tab_content", "children"), [Input("tabs", "value")])
-def render_content(tab):
-    if tab == "production_tab":
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+
+
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def render_page_content(pathname):
+    if pathname in ["/", "/apps/prod_data"]:
         return production.serve_layout()
-    elif tab == "stoptime_tab":
+    elif pathname == "/apps/stop_data":
         return stoptime.serve_layout()
-    else:
-        return production.serve_layout()
+    # If the user tries to reach a different page, return a 404 message
+    return dbc.Jumbotron(
+        [
+            html.H1("404: Not found", className="text-danger"),
+            html.Hr(),
+            html.P(f"The pathname {pathname} was not recognised..."),
+        ]
+    )
 
 
 server = app.server
