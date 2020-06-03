@@ -169,8 +169,8 @@ def serve_layout():
     [Input("interval_stop", "n_intervals")],
 )
 def update_status(_):
-    data_last_updated = dt.now()
-
+    time_now = str(dt.now())
+    data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
     return "Data last updated at {}".format(data_last_updated)
 
 

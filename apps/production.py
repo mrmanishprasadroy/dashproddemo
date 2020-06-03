@@ -10,7 +10,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
 
-from app import app, indicator, dbc
+from app import app, dbc
 from datamanager import get_production
 
 
@@ -119,7 +119,6 @@ def date_weight_source(df, time):
                        orientation="v")]  # x could be any column value since its a count
         layout = go.Layout(
             barmode="stack",
-            margin=dict(l=210, r=25, b=20, t=0, pad=4),
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
@@ -131,199 +130,285 @@ def default_layout_null():
     return html.Div(style={'display': 'none'})
 
 
+""" Layout Elements"""
+""" Top Element """
+alert = dbc.Alert(
+    [
+        dbc.Row([
+            dbc.Col(html.H2("Coil Production Analysis", className="alert-heading")),
+            dbc.Col(html.H6(id="status_prod", className="alert-heading")),
+        ]),
+        html.Hr(),
+        dbc.Row([
+            dbc.Col(
+                html.Div(
+                    dcc.DatePickerRange(
+                        id='date-picker-range',
+                        min_date_allowed=dt(2017, 8, 5),
+                        max_date_allowed=dt.now(),
+                        initial_visible_month=dt.now(),
+                        end_date=dt.now()
+                    )
+                ), width="auto"
+            ),
+            dbc.Col(
+                html.Div(
+                    dbc.Button(
+                        id='submit-button',
+                        n_clicks=0,
+                        children='Submit',
+                        color="primary", className="mr-1"
+                    )
+                ), width="auto")
+        ]),
+    ]
+)
+""" Indicators"""
+count_Indicator = [
+    dbc.CardHeader("Coils Count"),
+    dbc.CardBody(
+        [
+            html.H4(html.P(id="left_leads_indicator", className="card-text")),
+        ]
+    ),
+]
+weight_Indicator = [
+    dbc.CardHeader("Total Weight in ton"),
+    dbc.CardBody(
+        [
+            html.H4(html.P(id="middle_leads_indicator", className="card-text")),
+        ]
+    ),
+]
+
+tonnage_Indicator = [
+    dbc.CardHeader("Tonnage Per coil in kg"),
+    dbc.CardBody(
+        [
+            html.H4(html.P(id="right_leads_indicator", className="card-text")),
+        ]
+    ),
+]
+
+indicators = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(count_Indicator, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(weight_Indicator, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(tonnage_Indicator, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+    ]
+)
+
+# Tonnage Graph Card
+yearly_weight_graph = [
+    dbc.CardHeader("Yearly Production Weight Analysis"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="yearly_weight_source",
+            ),
+        ]
+    ),
+]
+
+monthly_weight_graph = [
+    dbc.CardHeader("Monthly Production Weight Analysis"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="monthly_weight_source",
+            ),
+        ]
+    ),
+]
+daily_weight_graph = [
+    dbc.CardHeader("Daily Production Weight Analysis"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="hour_weight_source",
+            ),
+        ]
+    ),
+]
+
+prod_weight_card = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(yearly_weight_graph, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(monthly_weight_graph, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(daily_weight_graph, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+    ]
+)
+""" Model """
+alloy_table_model = [
+    dbc.CardHeader("Alloy Code Statistics"),
+    dbc.CardBody(
+        [
+            html.Div(
+                id="alloy_thickness_table",
+                style={
+                    "maxHeight": "320px",
+                    "overflowY": "scroll",
+                    "padding": "8",
+                    "marginTop": "5",
+                    "backgroundColor": "white",
+                    "border": "1px solid #C8D4E3",
+                    "borderRadius": "3px"
+                }
+            )
+        ]
+    )
+]
+
+witdth_table_model = [
+    dbc.CardHeader("Width Statistics"),
+    dbc.CardBody(
+        [
+            html.Div(
+                id="width_thickness_table",
+                style={
+                    "maxHeight": "320px",
+                    "overflowY": "scroll",
+                    "padding": "8",
+                    "marginTop": "5",
+                    "backgroundColor": "white",
+                    "border": "1px solid #C8D4E3",
+                    "borderRadius": "3px"
+                }
+            )
+        ]
+    )
+]
+
+thickness_table_model = [
+    dbc.CardHeader("Exit Thickness Statistics"),
+    dbc.CardBody(
+        [
+            html.Div(
+                id="exit_thickness_weight_table",
+                style={
+                    "overflowY": "scroll",
+                }
+            )
+        ]
+    )
+]
+
+""" Count Graph Count"""
+alloy_count_graph = [
+    dbc.CardHeader("Coils count with Alloy Code"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="alloy_source",
+            ),
+        ]
+    ),
+]
+
+entry_width_count_graph = [
+    dbc.CardHeader("Coils count with Entry width"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="width_source",
+            ),
+        ]
+    ),
+]
+
+exit_thickness_count_graph = [
+    dbc.CardHeader("Coils count with Exit Thickness"),
+    dbc.CardBody(
+        [
+            html.Div(
+                dcc.RangeSlider(
+                    id='thicknessslider',
+                    marks={i: 'Thick.  {} mm'.format(i) for i in range(0, 4)},
+                    min=-0,
+                    max=3,
+                    step=0.1,
+                    value=[0, 3]
+                ),
+            ),
+            dcc.Graph(
+                id="thickness_leads",
+            ),
+        ]
+    ),
+]
+
+count_graph_card = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(alloy_count_graph, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(entry_width_count_graph, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(exit_thickness_count_graph, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+    ]
+)
+
+tables_card = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(alloy_table_model, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(witdth_table_model, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(thickness_table_model, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+    ]
+)
+modal = html.Div(
+    [
+        dbc.Button("Open modal", id="open"),
+        dbc.Modal(
+            [
+                dbc.ModalHeader("Header"),
+                dbc.ModalBody("This is the content of the modal"),
+                dbc.ModalFooter(
+                    dbc.Button("Close", id="close", className="ml-auto")
+                ),
+            ],
+            id="modal",
+        ),
+    ]
+)
+
+
 def serve_layout():
     return html.Div(
         [
             # Interval
             dcc.Interval(interval=60 * 1000, id="interval_prod"),
+            # Alert
+            alert,
+            # Indicators
+            indicators,
 
-            # top controls
-            html.Div(
-                [
-                    html.Div(
-                        dcc.DatePickerRange(
-                            id='date-picker-range',
-                            min_date_allowed=dt(2017, 8, 5),
-                            max_date_allowed=dt.now(),
-                            initial_visible_month=dt.now(),
-                            end_date=dt.now()
-                        ),
-                        className="three columns",
-                    ),
-                    html.Div(html.Button(id='submit-button', n_clicks=0, children='Submit',
-                                         className='button button-primary'), className="two columns"),
-                    html.Div(
-                        dcc.RangeSlider(
-                            id='thicknessslider',
-                            marks={i: 'Exit Thickness  {} mm'.format(i) for i in range(0, 4)},
-                            min=-0,
-                            max=3,
-                            step=0.1,
-                            value=[0, 3]
-                        ),
-                        className="three columns"
-                    ),
-                    html.Div(id="status_prod", className="three columns"),
-                ],
-                className="row",
-                style={"marginBottom": "10"},
-            ),
-            # indicators row div
-            html.Div(
-                [
-                    indicator(
-                        "#00cc96", "Coils Count", "left_leads_indicator"
-                    ),
-                    indicator(
-                        "#119DFF", "Total Weight in ton", "middle_leads_indicator"
-                    ),
-                    indicator(
-                        "#EF553B",
-                        "Tonnage Per coil in kg",
-                        "right_leads_indicator",
-                    ),
-                ],
-                className="row",
-            ),
+            # Production Graph
+            prod_weight_card,
 
-            # charts row div for  weight Analysis
-            html.Div(
-                [
-                    html.Div(
-                        [
-                            html.P("Yearly Production Weight Analysis"),
-                            dcc.Graph(
-                                id="yearly_weight_source",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
-                    html.Div(
-                        [
-                            html.P("Monthly Production Weight Analysis"),
-                            dcc.Graph(
-                                id="monthly_weight_source",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
-                    html.Div(
-                        [
-                            html.P("Daily Production Weight Analysis"),
-                            dcc.Graph(
-                                id="hour_weight_source",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
+            # Count Graph,
+            count_graph_card,
 
-                    ),
-                ],
-                className="row",
-                style={"marginTop": "5"}
-            ),
-            # charts row div
-            html.Div(
-                [
-                    html.Div(
-                        [
-                            html.P("Coils count with Alloy Code"),
-                            dcc.Graph(
-                                id="alloy_source",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
-                    html.Div(
-                        [
-                            html.P("Coils count with Entry width"),
-                            dcc.Graph(
-                                id="width_source",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
+            # Model
+            tables_card,
 
-                    html.Div(
-                        [
-                            html.P("Coils count with Exit Thickness"),
-                            dcc.Graph(
-                                id="thickness_leads",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-
-                        ],
-                        className="four columns chart_div"
-                    ),
-                ],
-                className="row",
-                style={"marginTop": "5"},
-
-            ),
             html.Div(id="time_df", style={'display': "none"}),
-            # table div
-            html.Div(
-                [
-
-                    html.Div(
-                        id="alloy_thickness_table",
-                        className="four columns",
-                        style={
-                            "maxHeight": "320px",
-                            "overflowY": "scroll",
-                            "padding": "8",
-                            "marginTop": "5",
-                            "backgroundColor": "white",
-                            "border": "1px solid #C8D4E3",
-                            "borderRadius": "3px"
-
-                        },
-                    ),
-
-                    html.Div(
-                        id="width_thickness_table",
-                        className="four columns",
-                        style={
-                            "maxHeight": "320px",
-                            "overflowY": "scroll",
-                            "padding": "8",
-                            "marginTop": "5",
-                            "backgroundColor": "white",
-                            "border": "1px solid #C8D4E3",
-                            "borderRadius": "3px"
-
-                        },
-                    ),
-
-                    html.Div(
-                        id="exit_thickness_weight_table",
-                        className="four columns",
-                        style={
-                            "maxHeight": "320px",
-                            "overflowY": "scroll",
-                            "padding": "8",
-                            "marginTop": "5",
-                            "backgroundColor": "white",
-                            "border": "1px solid #C8D4E3",
-                            "borderRadius": "3px"
-
-                        },
-                    )
-                ],
-                className="row",
-                style={"marginTop": "5"},
-
-            ),
         ]
     )
 
@@ -333,7 +418,8 @@ def serve_layout():
     [Input("interval_prod", "n_intervals")],
 )
 def update_status(_):
-    data_last_updated = dt.now()
+    time_now = str(dt.now())
+    data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
     return "Data last updated at {}".format(data_last_updated)
 
 
@@ -350,6 +436,18 @@ def update_output(_, n_clicks, start_date, end_date):
     else:
         pass
     return df.to_json(orient='split')
+
+
+# module One
+@app.callback(
+    Output("modal", "is_open"),
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
 
 
 # updates left indicator based on df updates
@@ -524,7 +622,7 @@ def aleads_table_callback(df, n_clicks, start_date, end_date):
             fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center'},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)',},
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -536,7 +634,7 @@ def aleads_table_callback(df, n_clicks, start_date, end_date):
                 } for c in ['COILIDOUT', 'COILIDIN', 'ALLOYCODE']
             ],
             style_header={
-                'backgroundColor': 'white',
+                'backgroundColor': 'black',
                 'fontWeight': 'bold'
             },
             style_table={
@@ -573,7 +671,7 @@ def bleads_table_callback(df, n_clicks, start_date, end_date):
             fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center'},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)',},
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -586,7 +684,7 @@ def bleads_table_callback(df, n_clicks, start_date, end_date):
                 } for c in ['COILIDOUT', 'COILIDIN', 'ALLOYCODE']
             ],
             style_header={
-                'backgroundColor': 'white',
+                'backgroundColor': 'black',
                 'fontWeight': 'bold'
             },
             style_table={
@@ -620,10 +718,10 @@ def cleads_table_callback(df, n_clicks, start_date, end_date):
         datatable = dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("rows"),
-            fixed_rows={'headers': True, 'data': 0},
+            #fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center'},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)',},
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -635,7 +733,7 @@ def cleads_table_callback(df, n_clicks, start_date, end_date):
                 } for c in ['COILIDOUT', 'COILIDIN', 'ALLOYCODE']
             ],
             style_header={
-                'backgroundColor': 'white',
+                'backgroundColor': 'rgb(30, 30, 30)',
                 'fontWeight': 'bold'
             },
             style_table={
