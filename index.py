@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from app import app, dbc
-from apps import production, stoptime
+from apps import production, stoptime, process_data, segment_data
 from dash.dependencies import Input, Output
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
@@ -42,8 +42,8 @@ sidebar = html.Div(
                 html.Hr(),
                 dbc.Nav(
                     [
-                        dbc.NavItem(dbc.NavLink('Segment Data ', href='/apps/prod_data', active=True)),
-                        dbc.NavItem(dbc.NavLink('Process Data ', href='/apps/stop_data', active=True)),
+                        dbc.NavItem(dbc.NavLink('Segment Data ', href='/apps/segment_data', active=True)),
+                        dbc.NavItem(dbc.NavLink('Process Data ', href='/apps/process_data', active=True)),
                     ],
                     vertical=True,
                     pills=True,
@@ -63,6 +63,10 @@ def render_page_content(pathname):
         return production.serve_layout()
     elif pathname == "/apps/stop_data":
         return stoptime.serve_layout()
+    elif pathname == "/apps/segment_data":
+        return segment_data.serve_layout()
+    elif pathname == "/apps/process_data":
+        return process_data.serve_layout()
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [

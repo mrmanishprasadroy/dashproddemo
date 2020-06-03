@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import json
 
 
 def get_production():
@@ -30,3 +31,15 @@ def get_stop_time():
     query_result['HOUR'] = query_result.DTSTORE.dt.hour
     print(query_result.tail())
     return query_result
+
+
+def get_segment_data():
+    with open('data/segmentdata.json') as json_file:
+        data = json.load(json_file)
+    return data
+
+
+def get_process_data():
+    with open('data/processdata.json') as json_file:
+        data = json.load(json_file)
+    return data

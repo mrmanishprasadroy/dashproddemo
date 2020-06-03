@@ -1,5 +1,4 @@
 import json
-import redis
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -7,31 +6,22 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from telegram_definition_L1 import *
 from app import app, dbc
-import os
-import tasks
-
-redis_instance = redis.StrictRedis.from_url(os.environ["REDIS_URL"])
-
-tasks.update_segment_data()
+from datetime import datetime as dt
+from datamanager import get_process_data
 
 
 def get_dataframe():
     """Retrieve the dataframe from Redis
     This dataframe is periodically updated through the redis task
     """
-    jsonified_df = redis_instance.hget(
-        tasks.REDIS_HASH_NAME, tasks.REDIS_KEYS["DATASEGMENT"]
-    ).decode("utf-8")
-    # df = pd.DataFrame(json.loads(jsonified_df))
-    with open('processdata.json', 'w') as outfile:
-        json.dump(jsonified_df, outfile)
+    jsonified_df = get_process_data()
     return json.loads(jsonified_df)
 
 
-first_card = dbc.Card(
+first_card = [
+    dbc.CardHeader("At Stand", className="text-success"),
     dbc.CardBody(
         [
-            html.H5("At Stand", className="card-title"),
             dcc.Dropdown(
                 id='atstand-list',
                 options=[
@@ -46,39 +36,43 @@ first_card = dbc.Card(
             ),
         ]
     )
-)
+]
 
-second_card = dbc.Card(
+
+second_card = [
+    dbc.CardHeader("Between  Stand", className="text-success"),
     dbc.CardBody(
         [
-            html.H5("Between  Stand", className="card-title"),
-            dcc.Dropdown(
-                id='betweenstand-list',
-                options=[
-                    {'label': '{}'.format(teltype_M22[i][0]), 'value': teltype_M22[i][0]} for i in range(0, 47)
-                ],
-                multi=True,
-                value=[teltype_M22[0][0]]
-            ),
+            html.Div([
+                dcc.Dropdown(
+                    id='betweenstand-list',
+                    options=[
+                        {'label': '{}'.format(teltype_M22[i][0]), 'value': teltype_M22[i][0]} for i in range(0, 47)
+                    ],
+                    multi=True,
+                    value=[teltype_M22[9][0]]
+                ),
+
+            ]),
             dcc.Graph(
                 id="betweenstand_plot",
                 config=dict(displayModeBar=False),
             ),
         ]
     )
-)
+]
 
-third_card = dbc.Card(
+third_card = [
+    dbc.CardHeader("Before First Stand", className="text-success"),
     dbc.CardBody(
         [
-            html.H5("Before First Stand", className="card-title"),
             dcc.Dropdown(
                 id='beforfirststand-list',
                 options=[
                     {'label': '{}'.format(teltype_M23[i][0]), 'value': teltype_M23[i][0]} for i in range(0, 47)
                 ],
                 multi=True,
-                value=[teltype_M23[0][0]]
+                value=[teltype_M23[6][0]]
             ),
             dcc.Graph(
                 id="beforfirststand_plot",
@@ -86,18 +80,19 @@ third_card = dbc.Card(
             ),
         ]
     )
-)
-fourth_card = dbc.Card(
+]
+
+fourth_card = [
+    dbc.CardHeader("After Last Stand",className="text-success"),
     dbc.CardBody(
         [
-            html.H5("After Last Stand", className="card-title"),
             dcc.Dropdown(
                 id='afterlaststand-list',
                 options=[
                     {'label': '{}'.format(teltype_M24[i][0]), 'value': teltype_M24[i][0]} for i in range(0, 67)
                 ],
                 multi=True,
-                value=[teltype_M24[0][0]]
+                value=[teltype_M24[9][0]]
             ),
             dcc.Graph(
                 id="afterlaststand_plot",
@@ -105,7 +100,7 @@ fourth_card = dbc.Card(
             ),
         ]
     )
-)
+]
 
 
 def serve_layout():
@@ -116,13 +111,13 @@ def serve_layout():
         # Cards
         dbc.Row(
             [
-                dbc.Col(dbc.Card(first_card, color='dark', outline=True), width=6),
-                dbc.Col(dbc.Card(second_card, color='dark', outline=True), width=6)
+                dbc.Col(dbc.Card(first_card, color='info', outline=True)),
+                dbc.Col(dbc.Card(second_card, color='info', outline=True))
             ]),
         dbc.Row(
             [
-                dbc.Col(dbc.Card(third_card, color='dark', outline=True), width=6),
-                dbc.Col(dbc.Card(fourth_card, color='dark', outline=True), width=6)
+                dbc.Col(dbc.Card(third_card, color='primary', outline=True)),
+                dbc.Col(dbc.Card(fourth_card, color='primary', outline=True))
             ])
     ])
 
@@ -317,10 +312,8 @@ def display_value(selected_dropdown_value, _):
     [Input('atstand-list', 'value'), Input("interval_pseg", "n_intervals")],
 )
 def update_status(value, _):
-    data_last_updated = redis_instance.hget(
-        tasks.REDIS_HASH_NAME, tasks.REDIS_KEYS["SEGMENT_DATE_UPDATED"]
-    ).decode("utf-8")
-
+    time_now = str(dt.now())
+    data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
     return "Data last updated at {}".format(data_last_updated)
 
 

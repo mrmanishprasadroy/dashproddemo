@@ -1,5 +1,4 @@
 import json
-import redis
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -7,23 +6,15 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from telegram_definition_L1 import *
 from app import app, dbc
-import os
-import tasks
-
-redis_instance = redis.StrictRedis.from_url(os.environ["REDIS_URL"])
-
-
-# tasks.update_segment_data()
+from datetime import datetime as dt
+from datamanager import get_segment_data
 
 
 def get_dataframe():
     """Retrieve the dataframe from Redis
     This dataframe is periodically updated through the redis task
     """
-    jsonified_df = redis_instance.hget(
-        tasks.REDIS_HASH_NAME, tasks.REDIS_KEYS["DATASEGMENT"]
-    ).decode("utf-8")
-    # df = pd.DataFrame(json.loads(jsonified_df))
+    jsonified_df = get_segment_data()
     return json.loads(jsonified_df)
 
 
@@ -52,7 +43,7 @@ first_card = dbc.Card(
                         id="segment_plot",
                         config=dict(displayModeBar=False),
                     ),
-                ], className="sms_chart_div", style={"marginBottom": "10"}
+                ], style={"marginBottom": "10"}
             )
         ]
     )
@@ -67,7 +58,7 @@ def serve_layout():
         # Cards
         dbc.Row(
             [
-                dbc.Col(dbc.Card(first_card,color="primary", outline=True), width=12)
+                dbc.Col(dbc.Card(first_card, color="primary", outline=True))
             ]),
 
     ])
@@ -243,8 +234,6 @@ def display_value(selected_dropdown_value, _):
     [Input('item-list', 'value'), Input("interval_seg", "n_intervals")],
 )
 def update_status(value, _):
-    data_last_updated = redis_instance.hget(
-        tasks.REDIS_HASH_NAME, tasks.REDIS_KEYS["SEGMENT_DATE_UPDATED"]
-    ).decode("utf-8")
-
+    time_now = str(dt.now())
+    data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
     return "Data last updated at {}".format(data_last_updated)
