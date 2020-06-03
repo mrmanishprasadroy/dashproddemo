@@ -7,22 +7,3 @@ import flask
 server = flask.Flask(__name__)
 app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.DARKLY])
 app.config.suppress_callback_exceptions = True
-
-
-# returns top indicator div
-def indicator(color, text, id_value):
-    return html.Div(
-        [
-
-            html.P(
-                text,
-                className="twelve columns indicator_text"
-            ),
-            html.P(
-                id=id_value,
-                className="indicator_value"
-            ),
-        ],
-        className="four columns indicator",
-
-    )

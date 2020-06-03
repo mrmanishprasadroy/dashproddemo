@@ -10,7 +10,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
 
-from app import app, indicator, dbc
+from app import app, dbc
 from datamanager import get_stop_time
 
 
@@ -89,7 +89,7 @@ pl_Indicator = [
     dbc.CardHeader("Total Delay Duartion PL in Min"),
     dbc.CardBody(
         [
-            html.H4(html.P(id="left_PL_indicator", className="card-text")),
+            html.H4(html.P(id="left_PL_indicator", className="card-text", style={'text-align': 'center'})),
         ]
     ),
 ]
@@ -97,7 +97,7 @@ tcm_Indicator = [
     dbc.CardHeader("Total Delay Duartion TCM in Min"),
     dbc.CardBody(
         [
-            html.H4(html.P(id="middle_TCM_indicator", className="card-text")),
+            html.H4(html.P(id="middle_TCM_indicator", className="card-text", style={'text-align': 'center'})),
         ]
     ),
 ]
@@ -106,7 +106,7 @@ plctm_Indicator = [
     dbc.CardHeader("Total Delay Duartion PLTCM in Min"),
     dbc.CardBody(
         [
-            html.H4(html.P(id="right_PLTCM_indicator", className="card-text")),
+            html.H4(html.P(id="right_PLTCM_indicator", className="card-text", style={'text-align': 'center'})),
         ]
     ),
 ]

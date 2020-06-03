@@ -168,7 +168,7 @@ count_Indicator = [
     dbc.CardHeader("Coils Count"),
     dbc.CardBody(
         [
-            html.H4(html.P(id="left_leads_indicator", className="card-text")),
+            html.H4(html.P(id="left_leads_indicator", className="card-text", style={'text-align': 'center'})),
         ]
     ),
 ]
@@ -176,7 +176,7 @@ weight_Indicator = [
     dbc.CardHeader("Total Weight in ton"),
     dbc.CardBody(
         [
-            html.H4(html.P(id="middle_leads_indicator", className="card-text")),
+            html.H4(html.P(id="middle_leads_indicator", className="card-text", style={'text-align': 'center'})),
         ]
     ),
 ]
@@ -185,7 +185,7 @@ tonnage_Indicator = [
     dbc.CardHeader("Tonnage Per coil in kg"),
     dbc.CardBody(
         [
-            html.H4(html.P(id="right_leads_indicator", className="card-text")),
+            html.H4(html.P(id="right_leads_indicator", className="card-text", style={'text-align': 'center'})),
         ]
     ),
 ]
@@ -619,10 +619,11 @@ def aleads_table_callback(df, n_clicks, start_date, end_date):
         datatable = dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("rows"),
-            fixed_rows={'headers': True, 'data': 0},
+            # fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)',},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
+                        'backgroundColor': 'rgb(50, 50, 50)', },
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -668,10 +669,11 @@ def bleads_table_callback(df, n_clicks, start_date, end_date):
         datatable = dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("rows"),
-            fixed_rows={'headers': True, 'data': 0},
+            # fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)',},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
+                        'backgroundColor': 'rgb(50, 50, 50)', },
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -718,10 +720,11 @@ def cleads_table_callback(df, n_clicks, start_date, end_date):
         datatable = dash_table.DataTable(
             columns=[{"name": i, "id": i} for i in df.columns],
             data=df.to_dict("rows"),
-            #fixed_rows={'headers': True, 'data': 0},
+            # fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)',},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
+                        'backgroundColor': 'rgb(50, 50, 50)', },
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
