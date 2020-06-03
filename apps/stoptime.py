@@ -203,7 +203,7 @@ def left_leads_indicator_callback(df, n_clicks, start_date, end_date):
     df = pd.read_json(df, orient="split")
     if len(df) > 0:
         df_stats = df.groupby('PLANT')['DURATION'].sum()
-        return np.ceil(df_stats[1])
+        return np.ceil(np.abs(df_stats[1]))
     else:
         return 0
 

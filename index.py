@@ -10,24 +10,26 @@ SIDEBAR_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "20rem",
+    "width": "300px",
     "padding": "2rem 1rem",
-    "background-color": "#cbd3da",
+    "background-color": "#2e3135",
+    "color":"#fff"
 }
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "25rem",
+    "margin-left": "35rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
+    "background-color": "#f3f4f6",
 }
-
+logo_url = "https://www.sms-group.com/typo3conf/ext/bm_client/Resources/Public/Assets/img/Logo_SMSGroup.svg"
 sidebar = html.Div(
     [
-        dbc.CardImg(src="assets/logo.png", top=True),
-        html.H2("Production DashBoard", className="display-4"),
-        html.Hr(),
+        dbc.CardImg(src=logo_url, top=True),
+        html.H2("Production Data", className="display-4"),
+        html.Hr(className="sms-navigation-divider"),
         dbc.Nav(
             [
                 dbc.NavItem(dbc.NavLink('Production Data ', href='/apps/prod_data', active=True)),
@@ -36,6 +38,16 @@ sidebar = html.Div(
             vertical=True,
             pills=True,
         ),
+        html.H2("Machine Data", className="display-4"),
+                html.Hr(),
+                dbc.Nav(
+                    [
+                        dbc.NavItem(dbc.NavLink('Segment Data ', href='/apps/prod_data', active=True)),
+                        dbc.NavItem(dbc.NavLink('Process Data ', href='/apps/stop_data', active=True)),
+                    ],
+                    vertical=True,
+                    pills=True,
+                ),
     ],
     style=SIDEBAR_STYLE,
 )

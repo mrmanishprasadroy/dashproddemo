@@ -10,7 +10,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
 
-from app import app, indicator
+from app import app, indicator, dbc
 from datamanager import get_production
 
 
