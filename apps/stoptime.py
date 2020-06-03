@@ -10,7 +10,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
 
-from app import app, indicator
+from app import app, indicator, dbc
 from datamanager import get_stop_time
 
 
@@ -39,7 +39,6 @@ def date_source(df, time):
                        orientation="v")]  # x could be any column value since its a count
         layout = go.Layout(
             barmode="stack",
-            margin=dict(l=210, r=25, b=20, t=0, pad=4),
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
@@ -51,115 +50,162 @@ def default_layout_null():
     return html.Div(style={'display': 'none'})
 
 
+""" Layout Elements"""
+""" Top Element """
+alert = dbc.Alert(
+    [
+        dbc.Row([
+            dbc.Col(html.H2("Plant Stop Analysis", className="alert-heading")),
+            dbc.Col(html.H6(id="status_stop", className="alert-heading")),
+        ]),
+        html.Hr(),
+        dbc.Row([
+            dbc.Col(
+                html.Div(
+                    dcc.DatePickerRange(
+                        id='date-range',
+                        min_date_allowed=dt(2017, 8, 5),
+                        max_date_allowed=dt.now(),
+                        initial_visible_month=dt.now(),
+                        end_date=dt.now()
+                    )
+                ), width="auto"
+            ),
+            dbc.Col(
+                html.Div(
+                    dbc.Button(
+                        id='submit-button',
+                        n_clicks=0,
+                        children='Submit',
+                        color="primary", className="mr-1"
+                    )
+                ), width="auto")
+        ]),
+    ]
+)
+
+""" Indicators"""
+pl_Indicator = [
+    dbc.CardHeader("Total Delay Duartion PL in Min"),
+    dbc.CardBody(
+        [
+            html.H4(html.P(id="left_PL_indicator", className="card-text")),
+        ]
+    ),
+]
+tcm_Indicator = [
+    dbc.CardHeader("Total Delay Duartion TCM in Min"),
+    dbc.CardBody(
+        [
+            html.H4(html.P(id="middle_TCM_indicator", className="card-text")),
+        ]
+    ),
+]
+
+plctm_Indicator = [
+    dbc.CardHeader("Total Delay Duartion PLTCM in Min"),
+    dbc.CardBody(
+        [
+            html.H4(html.P(id="right_PLTCM_indicator", className="card-text")),
+        ]
+    ),
+]
+
+indicators = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(pl_Indicator, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(tcm_Indicator, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(plctm_Indicator, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+    ]
+)
+
+# Tonnage Graph Card
+yearly_delay_graph = [
+    dbc.CardHeader("Yearly Avg Delay"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="yearly_analysis",
+            ),
+        ]
+    ),
+]
+
+monthly_delay_graph = [
+    dbc.CardHeader("Monthly Avg Delay"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="monthly_analysis",
+            ),
+        ]
+    ),
+]
+daily_delay_graph = [
+    dbc.CardHeader("hourly Avg Delay"),
+    dbc.CardBody(
+        [
+            dcc.Graph(
+                id="hour_analysis",
+            ),
+        ]
+    ),
+]
+
+delay_graph_card = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dbc.Card(yearly_delay_graph, color="primary", inverse=True)),
+                dbc.Col(dbc.Card(monthly_delay_graph, color="secondary", inverse=True)),
+                dbc.Col(dbc.Card(daily_delay_graph, color="info", inverse=True)),
+            ],
+            className="mb-4",
+        ),
+    ]
+)
+
+""" Model """
+alloy_table_model = [
+    dbc.CardHeader("Plant Delay Statistics", className="card-title"),
+    dbc.CardBody(
+        [
+            html.Div(
+                dcc.Loading(id='table-view', children=html.Div(
+                    id="stop_table",
+                ), type="cube"),
+
+            )
+        ]
+    )
+]
+table_cards = dbc.Row(
+    [dbc.Col(dbc.Card(alloy_table_model, color="primary", inverse=True))]
+)
+
+
 def serve_layout():
     return html.Div(
         [
-
-            html.Div(
-                [
-                    html.Div(
-                        dcc.DatePickerRange(
-                            id='date-range',
-                            min_date_allowed=dt(2017, 8, 5),
-                            max_date_allowed=dt.now(),
-                            initial_visible_month=dt.now(),
-                            end_date=dt.now()
-                        ),
-                        className="four columns",
-                    ),
-                    html.Div(html.Button(id='submit-button', n_clicks=0, children='Submit',
-                                         className='button button-primary'), className="two columns"),
-                    html.Div(id="status_stop", className="four columns"),
-                ],
-                className="row",
-                style={"marginBottom": "10"},
-            ),
+            # ALeart
+            alert,
             # Interval
             dcc.Interval(interval=60 * 1000, id="interval_stop"),
 
             # indicators row div
-            html.Div(
-                [
-                    indicator(
-                        "#00cc96", "Total Delay Duartion PL in Min", "left_PL_indicator"
-                    ),
-                    indicator(
-                        "#119DFF", "Total Delay Duartion TCM in Min", "middle_TCM_indicator"
-                    ),
-                    indicator(
-                        "#EF553B",
-                        "Total Delay Duartion PLTCM in Min",
-                        "right_PLTCM_indicator",
-                    ),
-                ],
-                className='row',
-            ),
+            indicators,
 
             # charts row div
-            html.Div(
-                [
-                    html.Div(
-                        [
-                            html.P("Yearly Avg Delay"),
-                            dcc.Graph(
-                                id="yearly_analysis",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
-                    html.Div(
-                        [
-                            html.P("Monthly Avg Delay"),
-                            dcc.Graph(
-                                id="monthly_analysis",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
-                    html.Div(
-                        [
-                            html.P("hourly Avg Delay"),
-                            dcc.Graph(
-                                id="hour_analysis",
-                                style={"height": "90%", "width": "98%"},
-                                config=dict(displayModeBar=False),
-                            ),
-                        ],
-                        className="four columns chart_div"
-                    ),
-
-                    # Hidden div inside the app that stores the intermediate value
-                    html.Div(id='intermediate-value', style={'display': 'none'}),
-
-                ],
-                className="row",
-                style={"marginTop": "5"},
-
-            ),
+            delay_graph_card,
             dcc.Input(id="input-1", value='Input triggers local spinner', style={'display': 'none'}),
             html.Div(id="parttime_df", style={'display': "none"}),
             # dcc.Loading(id="loading-1", children=[html.Div(id="loading-output-1")], type="default"),
-
-            # table div
-            dcc.Loading(id='table-view', children=html.Div(
-                id="stop_table",
-                className="row",
-                style={
-                    #  "maxHeight": "320px",
-                    #  "overflowY": "scroll",
-                    "padding": "8",
-                    "marginTop": "5",
-                    "backgroundColor": "white",
-                    "border": "1px solid #C8D4E3",
-                    "borderRadius": "3px"
-
-                },
-            ), type="default"),
-
+            table_cards,
         ]
     )
 
@@ -258,9 +304,9 @@ def leads_table_callback(df, value, n_clicks, start_date, end_date):
             fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center'},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)'},
             style_header={
-                'backgroundColor': 'white',
+                'backgroundColor': 'black',
                 'fontWeight': 'bold'
             },
             style_data_conditional=[{
