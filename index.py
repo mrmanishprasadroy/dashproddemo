@@ -19,16 +19,15 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "35rem",
+    "margin-left": "30rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
-    "background-color": "#f3f4f6",
 }
 logo_url = "https://www.sms-group.com/typo3conf/ext/bm_client/Resources/Public/Assets/img/Logo_SMSGroup.svg"
 sidebar = html.Div(
     [
         dbc.CardImg(src=logo_url, top=True),
-        html.H2("Production Data", className="display-4"),
+        html.H2("Production Data", className="display-7"),
         html.Hr(className="sms-navigation-divider"),
         dbc.Nav(
             [
@@ -38,7 +37,7 @@ sidebar = html.Div(
             vertical=True,
             pills=True,
         ),
-        html.H2("Machine Data", className="display-4"),
+        html.H2("Machine Data", className="display-7"),
                 html.Hr(),
                 dbc.Nav(
                     [
