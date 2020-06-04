@@ -314,7 +314,7 @@ def display_value(selected_dropdown_value, _):
 def update_status(value, _):
     time_now = str(dt.now())
     data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
-    return "Data last updated at {}".format(data_last_updated)
+    return "Data last updated at {} UTC".format(data_last_updated)
 
 
 '''

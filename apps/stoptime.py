@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
-
+from dash.exceptions import PreventUpdate
 from app import app, dbc
 from datamanager import get_stop_time
 
@@ -217,7 +217,7 @@ def serve_layout():
 def update_status(_):
     time_now = str(dt.now())
     data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
-    return "Data last updated at {}".format(data_last_updated)
+    return "Data last updated at {} UTC".format(data_last_updated)
 
 
 # update hidden div data block
@@ -229,13 +229,16 @@ def update_status(_):
 )
 def store_data(_, n_clicks, start_date, end_date):
     df = get_stop_time()
-    if n_clicks > 0:
-        df_1 = df.set_index('DATE')
-        df = df_1.loc[start_date:end_date]
-        cleaned_df = df.reset_index()
+    if start_date and end_date is not None:
+        if n_clicks > 0:
+            start = pd.to_datetime(start_date)
+            end = pd.to_datetime(end_date)
+            df1 = df.loc[(df['DATE'] > start) & (df['DATE'] <= end)]
+            if df1.empty:
+                raise PreventUpdate
+            return df1.to_json(orient="split")
     else:
-        cleaned_df = df
-    return cleaned_df.to_json(orient="split")
+        return df.to_json(orient="split")
 
 
 # updates left indicator based on df updates
@@ -304,7 +307,8 @@ def leads_table_callback(df, value, n_clicks, start_date, end_date):
             fixed_rows={'headers': True, 'data': 0},
             # filtering=True,
             sort_action="native",
-            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center','backgroundColor': 'rgb(50, 50, 50)'},
+            style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
+                        'backgroundColor': 'rgb(50, 50, 50)'},
             style_header={
                 'backgroundColor': 'black',
                 'fontWeight': 'bold'

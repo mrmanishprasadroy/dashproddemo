@@ -28,7 +28,7 @@ def get_stop_time():
     query_result['DURATION'] = np.abs(pd.to_datetime(query_result['DTEND']) - pd.to_datetime(query_result['DTSTART']))
     query_result['DURATION'] = query_result['DURATION'] / np.timedelta64(1, 'm')
     query_result['DTSTORE'] = pd.to_datetime(query_result['DTSTORE'])
-    query_result['DATE'] = query_result.DTSTORE.dt.date
+    query_result['DATE'] = pd.to_datetime(query_result.DTSTORE.dt.date)
     query_result['YEAR'] = query_result.DTSTORE.dt.year
     query_result['MONTH'] = query_result.DTSTORE.dt.date.map(lambda x: x.strftime('%Y-%m'))
     query_result['DAY'] = query_result.DTSTORE.dt.day

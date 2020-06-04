@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
-
+from dash.exceptions import PreventUpdate
 from app import app, dbc
 from datamanager import get_production
 
@@ -420,7 +420,7 @@ def serve_layout():
 def update_status(_):
     time_now = str(dt.now())
     data_last_updated = dt.strptime(time_now[:19], "%Y-%m-%d %H:%M:%S")
-    return "Data last updated at {}".format(data_last_updated)
+    return "Data last updated at {} UTC".format(data_last_updated)
 
 
 @app.callback(Output('time_df', 'children'),
@@ -433,9 +433,12 @@ def update_output(_, n_clicks, start_date, end_date):
     df['Date'] = df.DTENDROLLING.dt.date
     if n_clicks > 0:
         df = filter_data(df, start_date, end_date)
+        if df.empty:
+            raise PreventUpdate
+        return df.to_json(orient='split')
     else:
-        pass
-    return df.to_json(orient='split')
+        return df.to_json(orient='split')
+
 
 
 # module One
