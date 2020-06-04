@@ -4,7 +4,9 @@ import json
 
 
 def get_production():
-    query_result = pd.read_csv('data/prod_tab.csv')
+    with open('data/Prod_tab.json') as json_file:
+        data = json.load(json_file)
+    query_result = pd.DataFrame(data.get('PROD_TAB'))
     # Fill Weight value to mean value or previous value
     query_result = query_result.replace('', np.nan)
     mean_weight = query_result['EXITWEIGHTMEAS'].mean(skipna=True)
@@ -18,10 +20,12 @@ def get_production():
 
 
 def get_stop_time():
-    query_result = pd.read_csv('data/stop_tab.csv')
+    with open('data/stop_tab.json') as json_file:
+        data = json.load(json_file)
+    query_result = pd.DataFrame(data.get('STOP_TAB'))
     # query_result.set_index(['DTSTORE'], inplace=True)
     # query_result['PLANT'] = query_result.PLANT.map({1: 'PL', 2: 'TCM', 3: 'PLTCM'})
-    query_result['DURATION'] = pd.to_datetime(query_result['DTEND']) - pd.to_datetime(query_result['DTSTART'])
+    query_result['DURATION'] = np.abs(pd.to_datetime(query_result['DTEND']) - pd.to_datetime(query_result['DTSTART']))
     query_result['DURATION'] = query_result['DURATION'] / np.timedelta64(1, 'm')
     query_result['DTSTORE'] = pd.to_datetime(query_result['DTSTORE'])
     query_result['DATE'] = query_result.DTSTORE.dt.date
