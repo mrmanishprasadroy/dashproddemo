@@ -20,8 +20,8 @@ SIDEBAR_STYLE = {
 # add some padding.
 CONTENT_STYLE = {
     "margin-left": "30rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
+    "margin-right": "1rem",
+    "padding": "1rem 1rem",
 }
 logo_url = "https://www.sms-group.com/typo3conf/ext/bm_client/Resources/Public/Assets/img/Logo_SMSGroup.svg"
 sidebar = html.Div(

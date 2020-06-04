@@ -250,13 +250,12 @@ prod_weight_card = html.Div(
 )
 """ Model """
 alloy_table_model = [
-    dbc.CardHeader("Alloy Code Statistics"),
     dbc.CardBody(
         [
             html.Div(
                 id="alloy_thickness_table",
                 style={
-                    "maxHeight": "320px",
+                    "maxHeight": "600px",
                     "overflowY": "scroll",
                     "padding": "8",
                     "marginTop": "5",
@@ -270,13 +269,12 @@ alloy_table_model = [
 ]
 
 witdth_table_model = [
-    dbc.CardHeader("Width Statistics"),
     dbc.CardBody(
         [
             html.Div(
                 id="width_thickness_table",
                 style={
-                    "maxHeight": "320px",
+                    "maxHeight": "600px",
                     "overflowY": "scroll",
                     "padding": "8",
                     "marginTop": "5",
@@ -290,7 +288,6 @@ witdth_table_model = [
 ]
 
 thickness_table_model = [
-    dbc.CardHeader("Exit Thickness Statistics"),
     dbc.CardBody(
         [
             html.Div(
@@ -308,6 +305,18 @@ alloy_count_graph = [
     dbc.CardHeader("Coils count with Alloy Code"),
     dbc.CardBody(
         [
+            dbc.Button("Open Statistics", id="open", color='warning', style={'margin': 'auto', 'width': '100%'}),
+            dbc.Modal(
+                [
+                    dbc.ModalHeader("Alloy Code Statistics",className="btn-info"),
+                    dbc.ModalBody(alloy_table_model),
+                    dbc.ModalFooter(
+                        dbc.Button("Close", id="close", className="ml-auto")
+                    ),
+                ],
+                id="modal",
+                size="xl",
+            ),
             dcc.Graph(
                 id="alloy_source",
             ),
@@ -319,6 +328,18 @@ entry_width_count_graph = [
     dbc.CardHeader("Coils count with Entry width"),
     dbc.CardBody(
         [
+            dbc.Button("Open Statistics", id="opentwo", color='primary', style={'margin': 'auto', 'width': '100%'}),
+            dbc.Modal(
+                [
+                    dbc.ModalHeader("Width Statistics",className="btn-info"),
+                    dbc.ModalBody(witdth_table_model),
+                    dbc.ModalFooter(
+                        dbc.Button("Close", id="closetwo", className="ml-auto")
+                    ),
+                ],
+                id="modaltwo",
+                size="xl",
+            ),
             dcc.Graph(
                 id="width_source",
             ),
@@ -338,7 +359,19 @@ exit_thickness_count_graph = [
                     max=3,
                     step=0.1,
                     value=[0, 3]
-                ),
+                ), style={'display': 'none'}
+            ),
+            dbc.Button("Open Statistics", id="openthree", color='success', style={'margin': 'auto', 'width': '100%'}),
+            dbc.Modal(
+                [
+                    dbc.ModalHeader("Exit Thickness Statistics",className="btn-info"),
+                    dbc.ModalBody(thickness_table_model),
+                    dbc.ModalFooter(
+                        dbc.Button("Close", id="closethree", className="ml-auto")
+                    ),
+                ],
+                id="modalthree",
+                size="xl",
             ),
             dcc.Graph(
                 id="thickness_leads",
@@ -372,21 +405,6 @@ tables_card = html.Div(
         ),
     ]
 )
-modal = html.Div(
-    [
-        dbc.Button("Open modal", id="open"),
-        dbc.Modal(
-            [
-                dbc.ModalHeader("Header"),
-                dbc.ModalBody("This is the content of the modal"),
-                dbc.ModalFooter(
-                    dbc.Button("Close", id="close", className="ml-auto")
-                ),
-            ],
-            id="modal",
-        ),
-    ]
-)
 
 
 def serve_layout():
@@ -404,9 +422,6 @@ def serve_layout():
 
             # Count Graph,
             count_graph_card,
-
-            # Model
-            tables_card,
 
             html.Div(id="time_df", style={'display': "none"}),
         ]
@@ -440,12 +455,35 @@ def update_output(_, n_clicks, start_date, end_date):
         return df.to_json(orient='split')
 
 
-
 # module One
 @app.callback(
     Output("modal", "is_open"),
     [Input("open", "n_clicks"), Input("close", "n_clicks")],
     [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+# Module Two
+@app.callback(
+    Output("modaltwo", "is_open"),
+    [Input("opentwo", "n_clicks"), Input("closetwo", "n_clicks")],
+    [State("modaltwo", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+# Module Three
+@app.callback(
+    Output("modalthree", "is_open"),
+    [Input("openthree", "n_clicks"), Input("closethree", "n_clicks")],
+    [State("modalthree", "is_open")],
 )
 def toggle_modal(n1, n2, is_open):
     if n1 or n2:
@@ -626,7 +664,7 @@ def aleads_table_callback(df, n_clicks, start_date, end_date):
             # filtering=True,
             sort_action="native",
             style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
-                        'backgroundColor': 'rgb(50, 50, 50)', },
+                        'backgroundColor': 'rgb(238,255,230)', },
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -638,12 +676,12 @@ def aleads_table_callback(df, n_clicks, start_date, end_date):
                 } for c in ['COILIDOUT', 'COILIDIN', 'ALLOYCODE']
             ],
             style_header={
-                'backgroundColor': 'black',
+                'backgroundColor': 'white',
                 'fontWeight': 'bold'
             },
             style_table={
-                'maxHeight': '280px',
-                'overflowY': 'scroll',
+                'maxHeight': '600px',
+                #'overflowY': 'scroll',
                 # 'border': 'thin lightgrey solid'
             },
         )
@@ -676,7 +714,7 @@ def bleads_table_callback(df, n_clicks, start_date, end_date):
             # filtering=True,
             sort_action="native",
             style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
-                        'backgroundColor': 'rgb(50, 50, 50)', },
+                        'backgroundColor': 'rgb(238,255,230)', },
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -689,11 +727,11 @@ def bleads_table_callback(df, n_clicks, start_date, end_date):
                 } for c in ['COILIDOUT', 'COILIDIN', 'ALLOYCODE']
             ],
             style_header={
-                'backgroundColor': 'black',
+                'backgroundColor': 'white',
                 'fontWeight': 'bold'
             },
             style_table={
-                'maxHeight': '280px',
+                'maxHeight': '600px',
                 'overflowY': 'scroll',
                 # 'border': 'thin lightgrey solid'
             },
@@ -727,7 +765,7 @@ def cleads_table_callback(df, n_clicks, start_date, end_date):
             # filtering=True,
             sort_action="native",
             style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
-                        'backgroundColor': 'rgb(50, 50, 50)', },
+                        'backgroundColor': 'rgb(238,255,230)', },
             style_data_conditional=[{
                 'if': {'row_index': 'odd'},
                 'backgroundColor': '#3D9970',
@@ -739,11 +777,11 @@ def cleads_table_callback(df, n_clicks, start_date, end_date):
                 } for c in ['COILIDOUT', 'COILIDIN', 'ALLOYCODE']
             ],
             style_header={
-                'backgroundColor': 'rgb(30, 30, 30)',
+                'backgroundColor': 'white',
                 'fontWeight': 'bold'
             },
             style_table={
-                'maxHeight': '280px',
+                'maxHeight': '600px',
                 'overflowY': 'scroll',
                 # 'border': 'thin lightgrey solid'
             },
