@@ -195,7 +195,7 @@ def serve_layout():
             # ALeart
             alert,
             # Interval
-            dcc.Interval(interval=60 * 1000, id="interval_stop"),
+            dcc.Interval(interval=300 * 1000, id="interval_stop"),
 
             # indicators row div
             indicators,

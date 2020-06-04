@@ -393,7 +393,7 @@ def serve_layout():
     return html.Div(
         [
             # Interval
-            dcc.Interval(interval=60 * 1000, id="interval_prod"),
+            dcc.Interval(interval=300 * 1000, id="interval_prod"),
             # Alert
             alert,
             # Indicators
