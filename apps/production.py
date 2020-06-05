@@ -92,37 +92,14 @@ def filter_data(df, start_date, end_date):
 def date_weight_source(df, time):
     types = df[time]
     values = np.round(df["EXITWEIGHTMEAS"])
-    if time == "Day":
-        data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2))]
-        layout = dict(
-            xaxis={"title": "Date Time",
-                   'rangeselector': {'buttons': list([
-                       {'count': 1, 'label': '1M', 'step': 'day', 'stepmode': 'backward'},
-                       {'count': 10, 'label': '6M', 'step': 'month', 'stepmode': 'backward'},
-                       {'step': 'all'}
-                   ])}, 'rangeslider': {'visible': True}, 'type': 'date'},
-            margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-            legend={'x': 0, 'y': 1},
-            hovermode='closest'
-        )
-    elif time == 'year':
-        data = [go.Pie(
-            labels=types,
-            values=values,
-            marker={"colors": ["#264e86", "#0074e4", "#74dbef", "#eff0f4"]},
-        )]
+    data = [go.Bar(x=values, y=types,
+                   orientation="h")]  # x could be any column value since its a count
 
-        layout = dict(margin=dict(l=15, r=10, t=0, b=65), legend=dict(orientation="h"))
-
-    else:
-        data = [go.Bar(x=types, y=values,
-                       orientation="v")]  # x could be any column value since its a count
-        layout = go.Layout(
-            barmode="stack",
-            paper_bgcolor="white",
-            plot_bgcolor="white",
-        )
-
+    layout = go.Layout(
+        barmode="stack",
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+    )
     return {"data": data, "layout": layout}
 
 
