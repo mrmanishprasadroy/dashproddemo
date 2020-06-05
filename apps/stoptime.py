@@ -18,29 +18,26 @@ def date_source(df, time):
     types = df[time]
     values = df["mean"]
     if time == "HOUR":
-        data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2))]
+        data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
         layout = dict(
             xaxis={"title": "Hours"},
             margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
             legend={'x': 0, 'y': 1},
             hovermode='closest'
         )
-    elif time == 'YEAR':
-        data = [go.Pie(
-            labels=types,
-            values=values,
-            marker={"colors": ["#264e86", "#0074e4", "#74dbef", "#eff0f4"]},
-        )]
-
-        layout = dict(margin=dict(l=15, r=10, t=0, b=65), legend=dict(orientation="h"))
-
     else:
-        data = [go.Bar(x=types, y=values,
+        data = [go.Bar(x=types, y=values, marker_color='rgb(55, 83, 109)',
                        orientation="v")]  # x could be any column value since its a count
         layout = go.Layout(
+            legend=dict(
+                x=0,
+                y=1.0,
+                bgcolor='rgba(255, 255, 255, 0)',
+                bordercolor='rgba(255, 255, 255, 0)'
+            ),
             barmode="stack",
-            paper_bgcolor="white",
-            plot_bgcolor="white",
+            bargap=0.15,  # gap between bars of adjacent location coordinates.
+            bargroupgap=0.1  # gap between bars of the same location coordinate.
         )
 
     return {"data": data, "layout": layout}

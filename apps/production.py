@@ -62,7 +62,7 @@ def thickness_pie_source(df):
 def thickness_source(df):
     types = df["EXITTHICK"]
     values = df["count"]
-    data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2))]
+    data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
     layout = dict(
         xaxis={"title": "Exit Thickness"},
         margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
@@ -92,13 +92,19 @@ def filter_data(df, start_date, end_date):
 def date_weight_source(df, time):
     types = df[time]
     values = np.round(df["EXITWEIGHTMEAS"])
-    data = [go.Bar(x=values, y=types,
+    data = [go.Bar(x=values, y=types,marker_color='rgb(55, 83, 109)',
                    orientation="h")]  # x could be any column value since its a count
 
     layout = go.Layout(
+        legend=dict(
+            x=0,
+            y=1.0,
+            bgcolor='rgba(255, 255, 255, 0)',
+            bordercolor='rgba(255, 255, 255, 0)'
+        ),
         barmode="stack",
-        paper_bgcolor="white",
-        plot_bgcolor="white",
+        bargap=0.15,  # gap between bars of adjacent location coordinates.
+        bargroupgap=0.1  # gap between bars of the same location coordinate.
     )
     return {"data": data, "layout": layout}
 
