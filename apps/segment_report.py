@@ -1,15 +1,15 @@
 import json
+
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 import pandas as pd
 import plotly.graph_objs as go
-from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output
-from telegram_definition_L1 import *
+from plotly.subplots import make_subplots
+
 from app import app, dbc
-from datetime import datetime as dt
 from datamanager import get_segment_data
-import dash_table
 
 
 def get_dataframe():
@@ -21,52 +21,37 @@ def get_dataframe():
 
 
 def generate_front_page():
-    filename = "volume Segment"
-    logo_url = "https://www.sms-group.com/typo3conf/ext/bm_client/Resources/Public/Assets/img/Logo_SMSGroup.svg"
+    filename = "Volume Segment"
 
     return html.Div(
-        id="report-header",
+        id="las-header",
         children=[
-            html.Img(id="las-logo", src=logo_url),
             html.Div(
-                id="report-header-text",
+                id="las-header-text",
                 children=[
-                    html.H1("Segment Measuring Point Report"),
-                    html.Div(
-                        id="las-file-info",
-                        children=[
-                            html.Span(id="source-filename", children=filename),
-                        ],
-                    ),
+                    html.H1("Segment Measuring Point Report")
                 ],
             ),
         ],
     )
 
 
-def generate_axis_title(desc, unit):
-    title_words = desc.split(" ")
-
-    current_line = ""
-    lines = []
-    for word in title_words:
-        if len(current_line) + len(word) > 15:
-            lines.append(current_line[:-1])
-            current_line = ""
-        current_line += "{} ".format(word)
-    lines.append(current_line)
-
-    title = "<br>".join(lines)
-    title += "<br>({})".format(unit)
-
-    return title
-
-
 def generate_table():
     dataset = get_dataframe()
     data = json.loads(dataset)
-    MP_00 = pd.read_json(data['df_00'], orient='split')
-
+    MP = pd.read_json(data['df_00'], orient='split')
+    col = ["time",
+           "SegId",
+           "SetupId",
+           "CoilId",
+           "LenSegStart",
+           "TmSinceThread",
+           "TmSeg",
+           "VolSeg",
+           "NumValSeg",
+           "TmSeg",
+           "VolSeg" ]
+    MP_00 = MP[col]
     datatable = dash_table.DataTable(
         id="table",
         columns=[{"name": i, "id": i} for i in MP_00.columns],
@@ -74,29 +59,35 @@ def generate_table():
         fixed_rows={'headers': True, 'data': 0},
         # filtering=True,
         sort_action="native",
-        style_cell={'width': '150px', 'padding': '5px', 'textAlign': 'center',
-                    'backgroundColor': 'rgb(50, 50, 50)'},
-        style_header={
-            'backgroundColor': 'black',
-            'fontWeight': 'bold'
+        style_cell={
+            "padding": "5px",
+            "midWidth": "0px",
+            "textAlign": "center",
+            "border": "white",
         },
-        style_data_conditional=[{
-            'if': {'row_index': 'odd'},
-            'backgroundColor': '#3D9970',
-        }],
-        style_table={
-            'maxHeight': '280px',
-            # 'overflowY': 'scroll',
-            #  'border': 'thin lightgrey solid'
-        },
+        style_data_conditional=[
+            {
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'rgb(248, 248, 248)'
+            }
+        ],
+        style_data={'border': '1px solid blue'},
+        style_header={'border': '1px solid pink'},
     )
     return datatable
+
+
+print_button = html.Div(
+    [
+        html.Div(id="controls", children=[dbc.Button("Print Report", id="las-print", size="lg", className="mr-1")]),
+    ]
+)
 
 
 def serve_layout():
     return html.Div(
         [
-            html.Div(id="controls", children=[html.Button("Print", id="las-print")]),
+            print_button,
             html.Div(id="frontpage", className="page", children=generate_front_page()),
             html.Div(
                 className="section",
@@ -127,6 +118,19 @@ def serve_layout():
 
 @app.callback(Output("las-table-print", "children"), [Input("table", "data")])
 def update_table_print(data):
+    colwidths = {
+        "time": "75px",
+        "SegId": "25px",
+        "SetupId": "25px",
+        "CoilId": "25px",
+        "LenSegStart": "25px",
+        "TmSinceThread": "25px",
+        "TmSeg": "25px",
+        "VolSeg": "25px",
+        "NumValSeg": "25px",
+        "TmSeg": "25px",
+        "VolSeg": "25px",
+    }
     tables_list = []
     num_tables = int(len(data) / 34) + 1  # 34 rows max per page
     for i in range(num_tables):
@@ -141,7 +145,7 @@ def update_table_print(data):
             0,
             html.Tr(
                 [
-                    html.Th(key.title(), style={"width": "25px"})
+                    html.Th(key.title(), style={"width": colwidths[key]})
                     for key in data[0].keys()
                 ]
             ),
@@ -155,12 +159,8 @@ def update_table_print(data):
 def generate_curves(
         height=800,
         width=1400,
-        bg_color="white",
-        font_size=10,
-        tick_font_size=8,
-        line_width=0.5,
 ):
-    fig = make_subplots(rows=1, cols=11, shared_yaxes=True,vertical_spacing=0.02)
+    fig = make_subplots(rows=1, cols=11, shared_yaxes=True, vertical_spacing=0.02)
     dataset = get_dataframe()
     data = json.loads(dataset)
     MP_00 = pd.read_json(data['df_00'], orient='split')

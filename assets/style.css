@@ -81,6 +81,7 @@
     #las-header {
         display: auto;
         width: auto;
+        background-color: #0057a5;
     }
 
     #las-header-text {
@@ -179,7 +180,7 @@ body {
 }
 
 .page {
-    padding: 50px;
+    /* padding: 50px; */
     background-color: white;
 }
 
@@ -230,6 +231,7 @@ body {
 
 #las-header-text h1 {
     position: relative;
+    position: relative;
 }
 
 #las-file-info {
@@ -256,21 +258,7 @@ body {
     padding-top: 5px;
 }
 
-#las-print {
-    font-family: aktiv-grotesk-thin,sans-serif;
-    font-variant: all-small-caps;
-    text-transform: lowercase;
-    font-size: 14pt;
-    background-color: rgba(0,0,0,0);
-    padding: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    color: #0157A0;
-    margin-top:10px;
-    border: solid 1px #0157A0;
-    border-radius: 5px;
-    transition-duration: 500ms;
-}
+
 
 #las-print:hover {
     color: #232323;
@@ -294,7 +282,7 @@ body {
 }
 
 #las-table {
-    max-height: 600px;
+    max-height: 800px;
     overflow-y: auto;
 }
 
@@ -316,7 +304,7 @@ body {
 }
 
 #las-table span.sort {
-    font-size: 20pt;
+    font-size: 12pt;
     display: inline-block;
     margin-right: 5px;
 }
@@ -404,7 +392,7 @@ body {
 }
 
 #las-table .dash-spreadsheet-container .dash-spreadsheet-inner td.dash-cell.column-1 .dash-cell-value {
-    width: 100 !important;
+    width: 30px !important;
 }
 
 #las-table td.dash-delete-cell {
