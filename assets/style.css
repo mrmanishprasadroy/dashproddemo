@@ -49,7 +49,6 @@
     }
 
     #frontpage {
-        background-color: rgba(0,0,0,0) !important;
         margin: 0px;
         page-break-after: always;
     }
@@ -187,7 +186,6 @@ body {
 #frontpage {
     margin-top: -30px;
     padding-bottom: 0px;
-    background-color: #F9F9F9;
 }
 
 #frontpage h1 {
