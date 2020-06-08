@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from app import app, dbc
-from apps import production, stoptime, process_data, segment_data
+from apps import production, stoptime, process_data, segment_data, segment_report
 from dash.dependencies import Input, Output
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
@@ -13,7 +13,7 @@ SIDEBAR_STYLE = {
     "width": "175px",
     "padding": "2rem 1rem",
     "background-color": "#2e3135",
-    "color":"#fff"
+    "color": "#fff"
 }
 
 # the styles for the main content position it to the right of the sidebar and
@@ -38,15 +38,24 @@ sidebar = html.Div(
             pills=True,
         ),
         html.H2("Machine Data", className="display-7"),
-                html.Hr(),
-                dbc.Nav(
-                    [
-                        dbc.NavItem(dbc.NavLink('Segment Data ', href='/apps/segment_data', active=True)),
-                        dbc.NavItem(dbc.NavLink('Process Data ', href='/apps/process_data', active=True)),
-                    ],
-                    vertical=True,
-                    pills=True,
-                ),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink('Segment Data ', href='/apps/segment_data', active=True)),
+                dbc.NavItem(dbc.NavLink('Process Data ', href='/apps/process_data', active=True)),
+            ],
+            vertical=True,
+            pills=True,
+        ),
+        html.H2("Reports ", className="display-7"),
+        html.Hr(),
+        dbc.Nav(
+            [
+                dbc.NavItem(dbc.NavLink('Segment Report ', href='/apps/segment_report', active=True)),
+            ],
+            vertical=True,
+            pills=True,
+        ),
     ],
     style=SIDEBAR_STYLE,
 )
@@ -66,6 +75,8 @@ def render_page_content(pathname):
         return segment_data.serve_layout()
     elif pathname == "/apps/process_data":
         return process_data.serve_layout()
+    elif pathname == "/apps/segment_report":
+        return segment_report.serve_layout()
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [
