@@ -6,7 +6,7 @@ import json
 def get_production():
     with open('data/Prod_tab.json') as json_file:
         data = json.load(json_file)
-    query_result = pd.DataFrame(data.get('PROD_TAB'))
+    query_result = pd.DataFrame(data)
     # Fill Weight value to mean value or previous value
     query_result = query_result.replace('', np.nan)
     mean_weight = query_result['EXITWEIGHTMEAS'].mean(skipna=True)
@@ -22,7 +22,7 @@ def get_production():
 def get_stop_time():
     with open('data/stop_tab.json') as json_file:
         data = json.load(json_file)
-    query_result = pd.DataFrame(data.get('STOP_TAB'))
+    query_result = pd.DataFrame(data)
     # query_result.set_index(['DTSTORE'], inplace=True)
     # query_result['PLANT'] = query_result.PLANT.map({1: 'PL', 2: 'TCM', 3: 'PLTCM'})
     query_result['DURATION'] = np.abs(pd.to_datetime(query_result['DTEND']) - pd.to_datetime(query_result['DTSTART']))
