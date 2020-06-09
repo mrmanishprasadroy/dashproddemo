@@ -170,7 +170,7 @@ body {
 .section-title {
     background-color: #0157A0;
     color: white;
-    width: calc(100% - 80px);
+    width: calc(100% - 0px);
     display: inline-block;
     padding: 10px;
     padding-left: 70px;

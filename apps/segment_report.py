@@ -157,10 +157,10 @@ def update_table_print(data):
 
 
 def generate_curves(
-        height=800,
+        height=900,
         width=1400,
 ):
-    fig = make_subplots(rows=1, cols=11, shared_yaxes=True, vertical_spacing=0.02)
+    fig = make_subplots(rows=4, cols=3, shared_yaxes=True, shared_xaxes=True)
     dataset = get_dataframe()
     data = json.loads(dataset)
     MP_00 = pd.read_json(data['df_00'], orient='split')
@@ -201,49 +201,49 @@ def generate_curves(
         y=MP_03[item],
         name=' At MP 03',
         text=MP_03[item]
-    ), row=1, col=4)
+    ), row=2, col=1)
     fig.add_trace(go.Scatter(
         x=MP_04['time'],
         y=MP_04[item],
         name=' At MP 04',
         text=MP_04[item]
-    ), row=1, col=5)
+    ), row=2, col=2)
     fig.add_trace(go.Scatter(
         x=MP_05['time'],
         y=MP_05[item],
         name=' At MP 05',
         text=MP_05[item]
-    ), row=1, col=6)
+    ), row=2, col=3)
     fig.add_trace(go.Scatter(
         x=MP_06['time'],
         y=MP_06[item],
         name=' At MP 06',
         text=MP_06[item],
-    ), row=1, col=7)
+    ), row=3, col=1)
     fig.add_trace(go.Scatter(
         x=MP_07['time'],
         y=MP_07[item],
         name=' At MP 07',
         text=MP_07[item]
-    ), row=1, col=8)
+    ), row=3, col=2)
     fig.add_trace(go.Scatter(
         x=MP_08['time'],
         y=MP_08[item],
         name=' At MP 08',
         text=MP_08[item]
-    ), row=1, col=9)
+    ), row=3, col=3)
     fig.add_trace(go.Scatter(
         x=MP_09['time'],
         y=MP_09[item],
         name=' At MP 09',
         text=MP_09[item]
-    ), row=1, col=10)
+    ), row=4, col=1)
     fig.add_trace(go.Scatter(
         x=MP_10['time'],
         y=MP_10[item],
         name=' At MP 10',
         text=MP_10[item]
-    ), row=1, col=11)
+    ), row=4, col=2)
 
     # #############################################################################
     # IMPORTANT | Set the global font properties of the figure
@@ -261,7 +261,7 @@ def generate_curves(
             go.layout.Annotation(
                 {
                     'showarrow': False,
-                    'text': 'tip',
+                    'text': 'Volume Segment',
                     'x': 0.5,
                     'xanchor': 'center',
                     'xref': 'paper',
