@@ -52,7 +52,7 @@ def default_layout_null():
 alert = dbc.Alert(
     [
         dbc.Row([
-            dbc.Col(html.H2("Plant Stop Analysis", className="alert-heading")),
+            dbc.Col(html.H2("PLTCM Plant Performance", className="alert-heading")),
             dbc.Col(html.H6(id="status_stop", className="alert-heading")),
         ]),
         html.Hr(),

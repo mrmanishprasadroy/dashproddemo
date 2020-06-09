@@ -118,7 +118,7 @@ def default_layout_null():
 alert = dbc.Alert(
     [
         dbc.Row([
-            dbc.Col(html.H2("Coil Production Analysis", className="alert-heading")),
+            dbc.Col(html.H2("TCM Coil Production Performance", className="alert-heading")),
             dbc.Col(html.H6(id="status_prod", className="alert-heading")),
         ]),
         html.Hr(),
@@ -288,10 +288,10 @@ alloy_count_graph = [
     dbc.CardHeader("Coils count with Alloy Code"),
     dbc.CardBody(
         [
-            dbc.Button("Open Statistics", id="open", color='warning', style={'margin': 'auto', 'width': '100%'}),
+            dbc.Button("Open Analysis", id="open", color='warning', style={'margin': 'auto', 'width': '100%'}),
             dbc.Modal(
                 [
-                    dbc.ModalHeader("Alloy Code Statistics",className="btn-info"),
+                    dbc.ModalHeader("Alloy Code Analysis",className="btn-info"),
                     dbc.ModalBody(alloy_table_model),
                     dbc.ModalFooter(
                         dbc.Button("Close", id="close", className="ml-auto")
@@ -311,10 +311,10 @@ entry_width_count_graph = [
     dbc.CardHeader("Coils count with Entry width"),
     dbc.CardBody(
         [
-            dbc.Button("Open Statistics", id="opentwo", color='primary', style={'margin': 'auto', 'width': '100%'}),
+            dbc.Button("Open Analysis", id="opentwo", color='primary', style={'margin': 'auto', 'width': '100%'}),
             dbc.Modal(
                 [
-                    dbc.ModalHeader("Width Statistics",className="btn-info"),
+                    dbc.ModalHeader("Width Analysis",className="btn-info"),
                     dbc.ModalBody(witdth_table_model),
                     dbc.ModalFooter(
                         dbc.Button("Close", id="closetwo", className="ml-auto")
@@ -344,10 +344,10 @@ exit_thickness_count_graph = [
                     value=[0, 3]
                 ), style={'display': 'none'}
             ),
-            dbc.Button("Open Statistics", id="openthree", color='success', style={'margin': 'auto', 'width': '100%'}),
+            dbc.Button("Open Analysis", id="openthree", color='success', style={'margin': 'auto', 'width': '100%'}),
             dbc.Modal(
                 [
-                    dbc.ModalHeader("Exit Thickness Statistics",className="btn-info"),
+                    dbc.ModalHeader("Exit Thickness Analysis",className="btn-info"),
                     dbc.ModalBody(thickness_table_model),
                     dbc.ModalFooter(
                         dbc.Button("Close", id="closethree", className="ml-auto")

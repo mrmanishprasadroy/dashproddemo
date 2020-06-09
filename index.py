@@ -10,7 +10,7 @@ SIDEBAR_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "175px",
+    "width": "221px",
     "padding": "2rem 1rem",
     "background-color": "#2e3135",
     "color": "#fff"
@@ -19,7 +19,7 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "17rem",
+    "margin-left": "22rem",
     "margin-right": "1rem",
     "padding": "1rem 1rem",
 }
@@ -27,22 +27,22 @@ logo_url = "https://www.sms-group.com/typo3conf/ext/bm_client/Resources/Public/A
 sidebar = html.Div(
     [
         dbc.CardImg(src=logo_url, top=True),
-        html.H2("Production Data", className="display-7"),
+        html.H2("Production Performance", className="display-7"),
         html.Hr(className="sms-navigation-divider"),
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink('Production Data ', href='/apps/prod_data', active=True)),
-                dbc.NavItem(dbc.NavLink('Stop Data ', href='/apps/stop_data', active=True)),
+                dbc.NavItem(dbc.NavLink('TCM Production', href='/apps/prod_data', active=True)),
+                dbc.NavItem(dbc.NavLink('PLTCM  Delays ', href='/apps/stop_data', active=True)),
             ],
             vertical=True,
             pills=True,
         ),
-        html.H2("Machine Data", className="display-7"),
+        html.H2("Machine Performance", className="display-7"),
         html.Hr(),
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink('Segment Data ', href='/apps/segment_data', active=True)),
-                dbc.NavItem(dbc.NavLink('Process Data ', href='/apps/process_data', active=True)),
+                dbc.NavItem(dbc.NavLink('TCM Segment Data ', href='/apps/segment_data', active=True)),
+                dbc.NavItem(dbc.NavLink('TCM Process Data ', href='/apps/process_data', active=True)),
             ],
             vertical=True,
             pills=True,
@@ -51,7 +51,7 @@ sidebar = html.Div(
         html.Hr(),
         dbc.Nav(
             [
-                dbc.NavItem(dbc.NavLink('Segment Report ', href='/apps/segment_report', active=True)),
+                dbc.NavItem(dbc.NavLink('TCM Segment Report ', href='/apps/segment_report', active=True)),
             ],
             vertical=True,
             pills=True,
