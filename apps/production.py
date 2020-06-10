@@ -62,7 +62,7 @@ def thickness_pie_source(df):
 def thickness_source(df):
     types = df["EXITTHICK"]
     values = df["count"]
-    data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
+    data = [go.Scatter(x=types, y=values,fill='tozeroy', line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
     layout = dict(
         xaxis={"title": "Exit Thickness"},
         margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
@@ -92,7 +92,13 @@ def filter_data(df, start_date, end_date):
 def date_weight_source(df, time):
     types = df[time]
     values = np.round(df["EXITWEIGHTMEAS"])
-    data = [go.Bar(x=values, y=types,marker_color='rgb(55, 83, 109)',
+    color_range = []
+    for i in types:
+        import random
+        r = lambda: random.randint(0, 255)
+        color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
+        color_range.append(color)
+    data = [go.Bar(x=values, y=types, marker_color=color_range ,# marker color can be a single color value or an iterable
                    orientation="h")]  # x could be any column value since its a count
 
     layout = go.Layout(
@@ -102,7 +108,7 @@ def date_weight_source(df, time):
             bgcolor='rgba(255, 255, 255, 0)',
             bordercolor='rgba(255, 255, 255, 0)'
         ),
-        barmode="stack",
+        barmode="group",
         bargap=0.15,  # gap between bars of adjacent location coordinates.
         bargroupgap=0.1  # gap between bars of the same location coordinate.
     )

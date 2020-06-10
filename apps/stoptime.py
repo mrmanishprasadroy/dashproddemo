@@ -18,7 +18,7 @@ def date_source(df, time):
     types = df[time]
     values = df["mean"]
     if time == "HOUR":
-        data = [go.Scatter(x=types, y=values, line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
+        data = [go.Scatter(x=types, y=values, fill='tozeroy', line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
         layout = dict(
             xaxis={"title": "Hours"},
             margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
