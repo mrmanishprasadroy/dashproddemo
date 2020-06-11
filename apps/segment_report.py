@@ -48,9 +48,7 @@ def generate_table():
            "TmSinceThread",
            "TmSeg",
            "VolSeg",
-           "NumValSeg",
-           "TmSeg",
-           "VolSeg" ]
+           "NumValSeg" ]
     MP_00 = MP[col]
     datatable = dash_table.DataTable(
         id="table",

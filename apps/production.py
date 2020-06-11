@@ -135,7 +135,7 @@ coil_tracking_model = [
                         id='tracking-date-picker-single',
                         calendar_orientation='vertical',
                         placeholder='Select a date',
-                        date=dt(2018, 8, 4)
+                        date=dt(2020,3, 13)
                     ), className="d-inline p-2 bg-dark text-white")
             ]
             ),
