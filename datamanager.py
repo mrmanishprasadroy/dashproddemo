@@ -3,6 +3,20 @@ import numpy as np
 import json
 
 
+def get_coil_tracking():
+    with open('data/Prod_tab.json') as json_file:
+        data = json.load(json_file)
+    query_result = pd.DataFrame(data)
+    query_result["Start"] = pd.to_datetime(query_result["DTSTARTROLL"])
+    query_result['Date'] = pd.to_datetime(query_result.Start.dt.date)
+    query_result["Finish"] = pd.to_datetime(query_result["DTDEPARTURE"])
+    query_result["Task"] = query_result["COILIDOUT"]
+    query_result["Resource"] = query_result["ENTRYWIDTH"]
+    query_result.dropna(axis=0, how='any', subset=["Start", "Finish"],
+                        inplace=True)
+    return query_result
+
+
 def get_production():
     with open('data/Prod_tab.json') as json_file:
         data = json.load(json_file)

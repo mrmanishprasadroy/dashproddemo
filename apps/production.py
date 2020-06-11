@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 from datetime import datetime as dt
-
+import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
@@ -11,7 +11,8 @@ from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
 from dash.exceptions import PreventUpdate
 from app import app, dbc
-from datamanager import get_production
+from datamanager import get_production, get_coil_tracking
+import plotly.figure_factory as ff
 
 
 # returns pie chart that shows coils per alloycode
@@ -62,7 +63,8 @@ def thickness_pie_source(df):
 def thickness_source(df):
     types = df["EXITTHICK"]
     values = df["count"]
-    data = [go.Scatter(x=types, y=values,fill='tozeroy', line=dict(dash='solid', width=2),marker_color='rgb(55, 83, 109)')]
+    data = [go.Scatter(x=types, y=values, fill='tozeroy', line=dict(dash='solid', width=2),
+                       marker_color='rgb(55, 83, 109)')]
     layout = dict(
         xaxis={"title": "Exit Thickness"},
         margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
@@ -98,8 +100,9 @@ def date_weight_source(df, time):
         r = lambda: random.randint(0, 255)
         color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
         color_range.append(color)
-    data = [go.Bar(x=values, y=types, marker_color=color_range ,# marker color can be a single color value or an iterable
-                   orientation="h")]  # x could be any column value since its a count
+    data = [
+        go.Bar(x=values, y=types, marker_color=color_range,  # marker color can be a single color value or an iterable
+               orientation="h")]  # x could be any column value since its a count
 
     layout = go.Layout(
         legend=dict(
@@ -120,6 +123,29 @@ def default_layout_null():
 
 
 """ Layout Elements"""
+coil_tracking_model = [
+    dbc.CardBody(
+        [
+            html.Div([
+                dbc.Alert(id="Tracking-Text", color="info"),
+                html.Div("Production Date", className="d-inline p-2 bg-primary text-white"),
+                html.Div(
+                    dcc.DatePickerSingle(
+                        id='tracking-date-picker-single',
+                        calendar_orientation='vertical',
+                        placeholder='Select a date',
+                        date=dt(2018, 8, 4)
+                    ), className="d-inline p-2 bg-dark text-white")
+            ]
+            ),
+            html.Div([
+                dcc.Graph(id="coil_gait_chart", style={
+                    "overflowY": "scroll",
+                }),
+            ])
+        ]
+    )
+]
 """ Top Element """
 alert = dbc.Alert(
     [
@@ -148,7 +174,21 @@ alert = dbc.Alert(
                         children='Submit',
                         color="primary", className="mr-1"
                     )
-                ), width="auto")
+                ), width="auto"),
+            dbc.Col(
+                html.Div([
+                    dbc.Button("Coil Tracking", id="openfour", className="mr-1", color="primary", ),
+                    dbc.Modal(
+                        [
+                            dbc.ModalHeader("Coil Production Time Line", className="btn-info"),
+                            dbc.ModalBody(coil_tracking_model),
+                            dbc.ModalFooter(dbc.Button("Close", id="closefour", className="ml-auto")),
+                        ],
+                        id="modalfour",
+                        size="xl",
+                    ),
+                ])
+            ),
         ]),
     ]
 )
@@ -297,7 +337,7 @@ alloy_count_graph = [
             dbc.Button("Open Analysis", id="open", color='warning', style={'margin': 'auto', 'width': '100%'}),
             dbc.Modal(
                 [
-                    dbc.ModalHeader("Alloy Code Analysis",className="btn-info"),
+                    dbc.ModalHeader("Alloy Code Analysis", className="btn-info"),
                     dbc.ModalBody(alloy_table_model),
                     dbc.ModalFooter(
                         dbc.Button("Close", id="close", className="ml-auto")
@@ -320,7 +360,7 @@ entry_width_count_graph = [
             dbc.Button("Open Analysis", id="opentwo", color='primary', style={'margin': 'auto', 'width': '100%'}),
             dbc.Modal(
                 [
-                    dbc.ModalHeader("Width Analysis",className="btn-info"),
+                    dbc.ModalHeader("Width Analysis", className="btn-info"),
                     dbc.ModalBody(witdth_table_model),
                     dbc.ModalFooter(
                         dbc.Button("Close", id="closetwo", className="ml-auto")
@@ -353,7 +393,7 @@ exit_thickness_count_graph = [
             dbc.Button("Open Analysis", id="openthree", color='success', style={'margin': 'auto', 'width': '100%'}),
             dbc.Modal(
                 [
-                    dbc.ModalHeader("Exit Thickness Analysis",className="btn-info"),
+                    dbc.ModalHeader("Exit Thickness Analysis", className="btn-info"),
                     dbc.ModalBody(thickness_table_model),
                     dbc.ModalFooter(
                         dbc.Button("Close", id="closethree", className="ml-auto")
@@ -480,6 +520,18 @@ def toggle_modal(n1, n2, is_open):
     return is_open
 
 
+# Module Four
+@app.callback(
+    Output("modalfour", "is_open"),
+    [Input("openfour", "n_clicks"), Input("closefour", "n_clicks")],
+    [State("modalfour", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
 # updates left indicator based on df updates
 @app.callback(
     Output("left_leads_indicator", "children"),
@@ -595,6 +647,41 @@ def weight_source_callback(n_clicks, df, start_date, end_date):
         return default_layout_null()
 
 
+# update bar chart figure df updates
+@app.callback(
+    [Output("coil_gait_chart", "figure"),
+     Output('Tracking-Text', 'children'), ],
+    [Input("tracking-date-picker-single", "date"),Input('submit-button', 'n_clicks'), Input("time_df", "children")]
+)
+def coil_Tracking_callback(date,_,df):
+    if date is not None:
+        df = get_coil_tracking()
+        df1 = df[df["Date"] == date]
+        if len(df1):
+            color_range = []
+            for i in df1[:]:
+                import random
+                r = lambda: random.randint(0, 255)
+                color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
+                color_range.append(color)
+            chart = ff.create_gantt(df1, colors=color_range, title='coil Production Tracking',
+                                    show_colorbar=True, bar_width=0.2, showgrid_x=True, showgrid_y=True)
+
+            fig = go.Figure(chart)
+            return fig, "Showing Chart For {}".format(date)
+        else:
+            figure = {
+                'data': [],
+
+                'layout': {
+                    'title': 'No Data Found',
+
+                }
+
+            }
+            return figure,"NO Data found for Date {}".format(date)
+
+
 # update pie chart figure df updates
 @app.callback(
     Output("width_source", "figure"),
@@ -670,7 +757,7 @@ def aleads_table_callback(df, n_clicks, start_date, end_date):
             },
             style_table={
                 'maxHeight': '600px',
-                #'overflowY': 'scroll',
+                # 'overflowY': 'scroll',
                 # 'border': 'thin lightgrey solid'
             },
         )
