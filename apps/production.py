@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 import math
 from datetime import datetime as dt
-import dash
+
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 import numpy as np
 import pandas as pd
+import plotly.figure_factory as ff
 from dash.dependencies import Input, Output, State
-from plotly import graph_objs as go
 from dash.exceptions import PreventUpdate
+from plotly import graph_objs as go
+
 from app import app, dbc
 from datamanager import get_production, get_coil_tracking
-import plotly.figure_factory as ff
 
 
 # returns pie chart that shows coils per alloycode
