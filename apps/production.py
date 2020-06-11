@@ -135,7 +135,7 @@ coil_tracking_model = [
                         id='tracking-date-picker-single',
                         calendar_orientation='vertical',
                         placeholder='Select a date',
-                        date=dt(2020,3, 13)
+                        date=dt(2020, 3, 13)
                     ), className="d-inline p-2 bg-dark text-white")
             ]
             ),
@@ -652,9 +652,9 @@ def weight_source_callback(n_clicks, df, start_date, end_date):
 @app.callback(
     [Output("coil_gait_chart", "figure"),
      Output('Tracking-Text', 'children'), ],
-    [Input("tracking-date-picker-single", "date"),Input('submit-button', 'n_clicks'), Input("time_df", "children")]
+    [Input("tracking-date-picker-single", "date"), Input('submit-button', 'n_clicks'), Input("time_df", "children")]
 )
-def coil_Tracking_callback(date,_,df):
+def coil_Tracking_callback(date, _, df):
     if date is not None:
         df = get_coil_tracking()
         df1 = df[df["Date"] == date]
@@ -680,7 +680,7 @@ def coil_Tracking_callback(date,_,df):
                 }
 
             }
-            return figure,"NO Data found for Date {}".format(date)
+            return figure, "NO Data found for Date {}".format(date)
 
 
 # update pie chart figure df updates

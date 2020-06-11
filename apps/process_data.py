@@ -38,7 +38,6 @@ first_card = [
     )
 ]
 
-
 second_card = [
     dbc.CardHeader("Between  Stand", className="text-success"),
     dbc.CardBody(
@@ -83,7 +82,7 @@ third_card = [
 ]
 
 fourth_card = [
-    dbc.CardHeader("After Last Stand",className="text-success"),
+    dbc.CardHeader("After Last Stand", className="text-success"),
     dbc.CardBody(
         [
             dcc.Dropdown(

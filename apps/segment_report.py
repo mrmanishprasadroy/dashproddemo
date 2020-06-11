@@ -21,8 +21,6 @@ def get_dataframe():
 
 
 def generate_front_page():
-    filename = "Volume Segment"
-
     return html.Div(
         id="las-header",
         children=[
@@ -48,7 +46,7 @@ def generate_table():
            "TmSinceThread",
            "TmSeg",
            "VolSeg",
-           "NumValSeg" ]
+           "NumValSeg"]
     MP_00 = MP[col]
     datatable = dash_table.DataTable(
         id="table",
@@ -123,8 +121,6 @@ def update_table_print(data):
         "CoilId": "25px",
         "LenSegStart": "25px",
         "TmSinceThread": "25px",
-        "TmSeg": "25px",
-        "VolSeg": "25px",
         "NumValSeg": "25px",
         "TmSeg": "25px",
         "VolSeg": "25px",
