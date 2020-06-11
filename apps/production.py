@@ -666,7 +666,7 @@ def coil_Tracking_callback(date,_,df):
                 color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
                 color_range.append(color)
             chart = ff.create_gantt(df1, colors=color_range, title='coil Production Tracking',
-                                    show_colorbar=True, bar_width=0.2, showgrid_x=True, showgrid_y=True)
+                                    show_colorbar=True, bar_width=0.5, showgrid_x=True, showgrid_y=True)
 
             fig = go.Figure(chart)
             return fig, "Showing Chart For {}".format(date)

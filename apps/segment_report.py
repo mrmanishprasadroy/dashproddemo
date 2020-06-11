@@ -158,7 +158,7 @@ def generate_curves(
         height=900,
         width=1400,
 ):
-    fig = make_subplots(rows=4, cols=3, shared_yaxes=True, shared_xaxes=True)
+    fig = make_subplots(rows=6, cols=2, shared_yaxes=True)
     dataset = get_dataframe()
     data = json.loads(dataset)
     MP_00 = pd.read_json(data['df_00'], orient='split')
@@ -193,55 +193,55 @@ def generate_curves(
         y=MP_02[item],
         name='At MP 02',
         text=MP_02[item]
-    ), row=1, col=3)
+    ), row=2, col=1)
     fig.add_trace(go.Scatter(
         x=MP_03['time'],
         y=MP_03[item],
         name=' At MP 03',
         text=MP_03[item]
-    ), row=2, col=1)
+    ), row=2, col=2)
     fig.add_trace(go.Scatter(
         x=MP_04['time'],
         y=MP_04[item],
         name=' At MP 04',
         text=MP_04[item]
-    ), row=2, col=2)
+    ), row=3, col=1)
     fig.add_trace(go.Scatter(
         x=MP_05['time'],
         y=MP_05[item],
         name=' At MP 05',
         text=MP_05[item]
-    ), row=2, col=3)
+    ), row=3, col=2)
     fig.add_trace(go.Scatter(
         x=MP_06['time'],
         y=MP_06[item],
         name=' At MP 06',
         text=MP_06[item],
-    ), row=3, col=1)
+    ), row=4, col=1)
     fig.add_trace(go.Scatter(
         x=MP_07['time'],
         y=MP_07[item],
         name=' At MP 07',
         text=MP_07[item]
-    ), row=3, col=2)
+    ), row=4, col=2)
     fig.add_trace(go.Scatter(
         x=MP_08['time'],
         y=MP_08[item],
         name=' At MP 08',
         text=MP_08[item]
-    ), row=3, col=3)
+    ), row=5, col=1)
     fig.add_trace(go.Scatter(
         x=MP_09['time'],
         y=MP_09[item],
         name=' At MP 09',
         text=MP_09[item]
-    ), row=4, col=1)
+    ), row=5, col=2)
     fig.add_trace(go.Scatter(
         x=MP_10['time'],
         y=MP_10[item],
         name=' At MP 10',
         text=MP_10[item]
-    ), row=4, col=2)
+    ), row=6, col=1)
 
     # #############################################################################
     # IMPORTANT | Set the global font properties of the figure
@@ -249,7 +249,7 @@ def generate_curves(
         font=dict(
             family="Time New Roman",
             size=18,
-            color="red"),
+            color="blue"),
         width=width,
         height=height
     )
