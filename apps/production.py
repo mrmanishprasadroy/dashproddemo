@@ -11,7 +11,7 @@ import plotly.figure_factory as ff
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from plotly import graph_objs as go
-
+import random
 from app import app, dbc
 from datamanager import get_production, get_coil_tracking
 
@@ -97,7 +97,6 @@ def date_weight_source(df, time):
     values = np.round(df["EXITWEIGHTMEAS"])
     color_range = []
     for i in types:
-        import random
         r = lambda: random.randint(0, 255)
         color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
         color_range.append(color)

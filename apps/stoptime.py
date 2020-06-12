@@ -12,6 +12,7 @@ from plotly import graph_objs as go
 from dash.exceptions import PreventUpdate
 from app import app, dbc
 from datamanager import get_stop_time
+import random
 
 
 def date_source(df, time):
@@ -27,7 +28,12 @@ def date_source(df, time):
             hovermode='closest'
         )
     else:
-        data = [go.Bar(x=types, y=values, marker_color='rgb(55, 83, 109)',
+        color_range = []
+        for i in types:
+            r = lambda: random.randint(0, 255)
+            color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
+            color_range.append(color)
+        data = [go.Bar(x=types, y=values, marker_color=color_range,
                        orientation="v")]  # x could be any column value since its a count
         layout = go.Layout(
             legend=dict(
