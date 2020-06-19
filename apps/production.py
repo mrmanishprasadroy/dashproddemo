@@ -96,26 +96,40 @@ def date_weight_source(df, time):
     types = df[time]
     values = np.round(df["EXITWEIGHTMEAS"])
     color_range = []
-    for i in types:
-        r = lambda: random.randint(0, 255)
-        color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
-        color_range.append(color)
-    data = [
-        go.Bar(x=values, y=types, marker_color=color_range,  # marker color can be a single color value or an iterable
-               orientation="h")]  # x could be any column value since its a count
+    if time != "Day":
+        for i in types:
+            r = lambda: random.randint(0, 255)
+            color = '#{:02x}{:02x}{:02x}'.format(r(), r(), r())
+            color_range.append(color)
+        data = [
+            go.Bar(x=values, y=types, marker_color=color_range,
+                   # marker color can be a single color value or an iterable
+                   orientation="h")]  # x could be any column value since its a count
 
-    layout = go.Layout(
-        legend=dict(
-            x=0,
-            y=1.0,
-            bgcolor='rgba(255, 255, 255, 0)',
-            bordercolor='rgba(255, 255, 255, 0)'
-        ),
-        barmode="group",
-        bargap=0.15,  # gap between bars of adjacent location coordinates.
-        bargroupgap=0.1  # gap between bars of the same location coordinate.
-    )
-    return {"data": data, "layout": layout}
+        layout = go.Layout(
+            legend=dict(
+                x=0,
+                y=1.0,
+                bgcolor='rgba(255, 255, 255, 0)',
+                bordercolor='rgba(255, 255, 255, 0)'
+            ),
+            barmode="group",
+            bargap=0.15,  # gap between bars of adjacent location coordinates.
+            bargroupgap=0.1  # gap between bars of the same location coordinate.
+        )
+        return {"data": data, "layout": layout}
+    else:
+        """data = [go.Scatter(x=types, y=values,line_shape='hvh', fill='tozeroy', line=dict(dash='solid', width=2),
+                       marker_color='rgb(0,176,246)')]"""
+        data=[go.Histogram(x=types,y=values,histfunc="sum",nbinsx=12)]
+        layout = dict(
+            xaxis={"title": "Coil Weight Histogram"},
+            margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+            legend={'x': 0, 'y': 1},
+            hovermode='closest'
+        )
+
+        return {"data": data, "layout": layout}
 
 
 def default_layout_null():
