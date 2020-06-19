@@ -123,7 +123,7 @@ def date_weight_source(df, time):
                        marker_color='rgb(0,176,246)')]"""
         data=[go.Histogram(x=types,y=values,histfunc="sum",nbinsx=12)]
         layout = dict(
-            xaxis={"title": "Coil Weight Histogram"},
+            xaxis={"title": "Histogram Binsize: 12"},
             margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
             legend={'x': 0, 'y': 1},
             hovermode='closest'
@@ -269,7 +269,7 @@ monthly_weight_graph = [
     ),
 ]
 daily_weight_graph = [
-    dbc.CardHeader("Daily Production Weight Analysis"),
+    dbc.CardHeader("Coil Weight Histogram"),
     dbc.CardBody(
         [
             dcc.Graph(
